@@ -1,0 +1,32 @@
+{
+  "name": "ai-news-pulse-backend",
+  "version": "1.0.0",
+  "description": "Backend for AI News Pulse - Dynamic News Aggregator with Sentiment Analysis",
+  "main": "src/server.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0 <19.0.0"
+  },
+  "scripts": {
+    "start": "node --import ./src/polyfills.js src/server.js",
+    "dev": "node --import ./src/polyfills.js --watch src/server.js",
+    "scrape": "node --import ./src/polyfills.js src/scripts/scrapeNews.js"
+  },
+  "keywords": [
+    "news",
+    "aggregator",
+    "sentiment-analysis",
+    "ai"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.1.3",
+    "axios": "^1.6.2",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^8.0.3"
+  }
+}
