@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://dynamic-news-aggregator-with-sentiment-bmkw.onrender.com';
+const API_BASE_URL = 'https://dynamic-news-aggregator-with-sentiment-bmkw.onrender.com/api';
 
 export const fetchNews = async (sentiment = 'All', category = 'All') => {
     try {
@@ -9,10 +9,7 @@ export const fetchNews = async (sentiment = 'All', category = 'All') => {
         if (sentiment !== 'All') params.sentiment = sentiment;
         if (category !== 'All') params.category = category;
 
-        const response = await axios.get(
-            `${API_BASE_URL}/api/news`,
-            { params }
-        );
+        const response = await axios.get(`${API_BASE_URL}/news`, { params });
 
         return response.data.data || [];
     } catch (error) {
