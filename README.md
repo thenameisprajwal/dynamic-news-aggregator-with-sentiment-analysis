@@ -1,403 +1,217 @@
-# AI News Pulse – Dynamic News Aggregator with Sentiment Analysis
+📰 Dynamic News Aggregator with Sentiment Analysis
+🔗 Live Deployment
 
-A production-ready, full-stack news aggregator powered by AI that scrapes news from multiple sources, performs sentiment analysis and topic classification using Google Gemini AI, and presents them in a beautiful, responsive interface.
+Frontend (Vercel):
+👉 https://dynamic-news-aggregator-w-git-567462-thenameisprajwals-projects.vercel.app/
 
-![AI News Pulse](https://img.shields.io/badge/Node.js-18.x-green) ![React](https://img.shields.io/badge/React-18.x-blue) ![Vite](https://img.shields.io/badge/Vite-5.x-purple)
+Backend API (Render):
+👉 https://dynamic-news-aggregator-with-sentiment-bmkw.onrender.com
 
-## 🎯 Project Overview
+Health Check:
+👉 https://dynamic-news-aggregator-with-sentiment-bmkw.onrender.com/health
 
-AI News Pulse is a sophisticated news aggregation platform that:
-- **Scrapes** news from BBC News and TechCrunch
-- **Analyzes** sentiment using Google Gemini AI (Positive/Neutral/Negative)
-- **Classifies** articles into categories (Politics, Business, Technology, Sports, Health, Other)
-- **Filters** articles by sentiment and category
-- **Displays** news in a premium, portfolio-ready UI
+📌 Project Overview
 
-## 🏗️ Architecture
+Dynamic News Aggregator with Sentiment Analysis is a full-stack web application that automatically collects news articles from multiple sources, analyzes their sentiment and category, stores them persistently, and presents them through an interactive, filterable user interface.
 
-### Backend Architecture
-```
-Backend (Node.js 18 + Express)
-├── Scrapers (Cheerio)
-│   ├── BBC News Scraper
-│   └── TechCrunch Scraper
-├── AI Services (Google Gemini)
-│   ├── Sentiment Analysis
-│   ├── Category Classification
-│   └── Data Diversity Checks
-├── Database (MongoDB + Mongoose)
-│   └── Article Storage
-└── REST API
-    └── GET /api/news (with filters)
-```
+The system is cloud-deployed, automated, scalable, and designed to mirror how real-world news aggregation platforms operate.
 
-**Tech Stack:**
-- **Runtime:** Node.js 18.x
-- **Framework:** Express.js
-- **Database:** MongoDB with Mongoose ODM
-- **Scraping:** Cheerio + Axios
-- **AI:** Google Gemini API (@google/generative-ai)
+No local setup is required for evaluation.
 
-### Frontend Architecture
-```
-Frontend (React 18 + Vite 5)
-├── Components
-│   ├── FilterBar (Sticky)
-│   ├── NewsCard
-│   ├── SentimentBadge (Color-coded)
-│   └── CategoryChip
-├── Services
-│   └── API Client (Axios)
-└── App (State Management)
-```
+🚀 Key Features
+🔄 Automated News Scraping
 
-**Tech Stack:**
-- **Framework:** React 18.2.0
-- **Build Tool:** Vite 5.0.8
-- **HTTP Client:** Axios
-- **Styling:** Modern CSS with gradients, animations
+Scrapes news from multiple sources using Cheerio
 
-## 🤖 AI Pipeline
+Deduplicates articles using URL-based checks
 
-### How It Works
+New articles are appended without deleting historical data
 
-1. **Scraping Phase**
-   - Scrapes BBC News and TechCrunch homepages
-   - Extracts title, description, URL, source, and publish date
-   - Deduplicates articles by URL
-   - Ensures descriptions are never empty
+🧠 Sentiment Analysis
 
-2. **AI Analysis Phase**
-   - Sends each article (title + description) to Google Gemini AI
-   - **Sentiment Analysis:** Returns score from -1 to 1
-     - `score > 0.2` → Positive
-     - `-0.2 ≤ score ≤ 0.2` → Neutral
-     - `score < -0.2` → Negative
-   - **Category Classification:** Analyzes content to determine category
-     - Politics, Business, Technology, Sports, Health, or Other
+Classifies articles as Positive, Neutral, or Negative
 
-3. **Data Diversity Strategy**
-   - After initial processing, checks dataset distribution
-   - If >80% articles are Neutral OR >80% are "Other", triggers re-analysis
-   - Re-analyzes with stricter prompts to ensure meaningful diversity
-   - **Does NOT fabricate data** - only re-classifies more precisely
+Sentiment indicators are displayed clearly in the UI
 
-4. **Storage Phase**
-   - Saves processed articles to MongoDB
-   - Creates indexes for efficient filtering
-   - Displays statistics (sentiment & category distribution)
+🏷️ Category Classification
 
-### AI Prompt Engineering
+Categories supported:
 
-The system uses carefully crafted prompts to ensure:
-- Accurate sentiment scoring with clear reasoning
-- Precise category classification
-- Avoidance of default/neutral classifications
-- Consideration of context and nuances
+Politics
 
-## 🔍 Filtering Logic
+Business
 
-### API Endpoint
-```
-GET /api/news?sentiment=<value>&category=<value>
-```
+Technology
 
-**Query Parameters:**
-- `sentiment`: `Positive`, `Neutral`, `Negative`, or `All`
-- `category`: `Politics`, `Business`, `Technology`, `Sports`, `Health`, `Other`, or `All`
+Sports
 
-**Examples:**
-```bash
-# All articles
+Health
+
+Other
+
+Category-based filtering supported
+
+🎛️ Advanced Filtering
+
+Filter by sentiment
+
+Filter by category
+
+Filters work consistently across old and newly added articles
+
+⏱️ Scheduled Auto-Updates
+
+GitHub Actions runs the scraper at scheduled intervals
+
+Breaking news appears automatically without redeployment
+
+Existing data remains intact
+
+☁️ Cloud-Deployed Architecture
+
+Frontend hosted on Vercel
+
+Backend API hosted on Render
+
+Database hosted on MongoDB Atlas
+
+🧱 Tech Stack
+Frontend
+
+React.js
+
+Vite
+
+Axios
+
+Deployed on Vercel
+
+Backend
+
+Node.js
+
+Express.js
+
+Cheerio (Web Scraping)
+
+MongoDB & Mongoose
+
+Deployed on Render
+
+Database
+
+MongoDB Atlas (Cloud-hosted)
+
+Automation
+
+GitHub Actions (scheduled scraping workflow)
+
+AI & Analysis (Architecture-Ready)
+
+Google Gemini API (AI-ready design)
+
+The system is architected to support AI-powered sentiment analysis and topic classification using Google Gemini.
+The current deployment uses an efficient backend analysis layer, with the pipeline designed to seamlessly integrate Gemini-based enrichment if enabled.
+
+🏗️ System Architecture
+Scraper Layer
+
+Fetches articles from multiple sources
+
+Normalizes and cleans scraped data
+
+Processing Layer
+
+Assigns sentiment and category
+
+Prevents duplicates using article URLs
+
+Database Layer
+
+Stores articles permanently
+
+Historical articles remain available
+
+API Layer
+
+RESTful endpoints with query-based filtering
+
+Frontend Layer
+
+Fetches data from deployed API
+
+Renders responsive news cards
+
+Provides sentiment & category filters
+
+📡 API Usage
+Get All News
 GET /api/news
 
-# Only positive articles
+Filter by Sentiment
 GET /api/news?sentiment=Positive
 
-# Only technology articles
+Filter by Category
 GET /api/news?category=Technology
 
-# Negative business articles
-GET /api/news?sentiment=Negative&category=Business
-```
+Combined Filters
+GET /api/news?sentiment=Neutral&category=Business
 
-### Frontend Filters
-- **Sticky filter bar** stays visible while scrolling
-- **Multiple active filters** work together (AND logic)
-- **Real-time filtering** fetches data on filter change
-- **Visual feedback** shows active filter states
-- **Smart empty states** guide users when no results
+🔄 Data Freshness & Updates
 
-## 📦 Version Choices
+News updates automatically via scheduled scraping
 
-### Why Node.js 18?
-- **Long-term Support (LTS)** release
-- **Stable** for production environments
-- **Compatible** with all dependencies
-- **Avoids** experimental features of v19/v20
+Old articles are never deleted
 
-### Why React 18?
-- **Production-ready** concurrent features
-- **Improved performance** with automatic batching
-- **Stable API** unlike React 19 (experimental)
-- **Wide ecosystem support**
+New articles are appended continuously
 
-### Why Vite 5?
-- **Fastest** build tool for React
-- **Stable version** (Vite 6/7 are too new)
-- **Excellent DX** with HMR
-- **Compatible** with React 18
+Filters apply across the complete dataset
 
-## 🚀 Local Setup
+This mirrors real-world news aggregation systems.
 
-### Prerequisites
-- **Node.js 18.x** ([Download](https://nodejs.org))
-- **MongoDB** installed and running
-- **Google Gemini API Key** ([Get one](https://makersuite.google.com/app/apikey))
+🧪 Evaluation Notes
 
-### Installation
+Application is fully deployed and operational
 
-#### 1. Clone or Navigate to Project
-```bash
-cd Dynamic-news-aggregator-with-sentiment-analysis
-```
+No local environment setup required
 
-#### 2. Backend Setup
-```bash
-cd backend
-npm install
-```
+All features can be tested using the live URLs
 
-Create `.env` file in `/backend`:
-```env
-MONGODB_URI=mongodb://127.0.0.1:27017/news-aggregator
-GEMINI_API_KEY=your_actual_gemini_api_key_here
-PORT=5000
-```
+Backend health endpoint confirms service availability
 
-#### 3. Frontend Setup
-```bash
-cd ../frontend
-npm install
-```
+📂 Repository Structure
+├── backend
+│   ├── src
+│   │   ├── config
+│   │   ├── models
+│   │   ├── routes
+│   │   ├── scrapers
+│   │   ├── services
+│   │   └── server.js
+│   └── package.json
+│
+├── frontend
+│   ├── src
+│   │   ├── components
+│   │   ├── services
+│   │   └── App.jsx
+│   └── package.json
+│
+└── .github
+    └── workflows
+        └── scrape.yml
 
-### Running the Application
+✅ Conclusion
 
-#### Terminal 1: Start MongoDB
-```bash
-# Windows (if MongoDB is not running as service)
-mongod
+This project demonstrates:
 
-# Or on macOS/Linux
-sudo systemctl start mongod
-```
+End-to-end full-stack development
 
-#### Terminal 2: Scrape News (First Time)
-```bash
-cd backend
-npm run scrape
-```
+Automated data pipelines
 
-**Expected Output:**
-```
-✅ MongoDB Connected
-📰 Scraping BBC News...
-📰 Scraping TechCrunch...
-🤖 Analyzing articles with Gemini AI...
-💾 Saving articles to database...
-📊 Dataset Statistics:
-  Total Articles: 25
-  Sentiment Distribution:
-    Positive: 8 (32%)
-    Neutral: 12 (48%)
-    Negative: 5 (20%)
-  Category Distribution:
-    Technology: 12 (48%)
-    Business: 7 (28%)
-    Politics: 4 (16%)
-    Other: 2 (8%)
-```
+Cloud deployment & scalability
 
-#### Terminal 3: Start Backend Server
-```bash
-cd backend
-npm start
-```
+Clean architecture with AI-ready design
 
-Server runs at: `http://localhost:5000`
+Real-world engineering practices
 
-#### Terminal 4: Start Frontend
-```bash
-cd frontend
-npm run dev
-```
-
-Frontend runs at: `http://localhost:5173`
-
-### Accessing the Application
-
-Open your browser and navigate to:
-```
-http://localhost:5173
-```
-
-## 📡 API Documentation
-
-### GET /api/news
-
-Retrieve filtered news articles.
-
-**Query Parameters:**
-| Parameter | Type | Values | Default |
-|-----------|------|--------|---------|
-| `sentiment` | string | `Positive`, `Neutral`, `Negative`, `All` | `All` |
-| `category` | string | `Politics`, `Business`, `Technology`, `Sports`, `Health`, `Other`, `All` | `All` |
-
-**Response:**
-```json
-{
-  "success": true,
-  "count": 10,
-  "data": [
-    {
-      "_id": "...",
-      "title": "Article Title",
-      "description": "Article description...",
-      "url": "https://...",
-      "source": "BBC News",
-      "publishDate": "2025-12-31T07:00:00.000Z",
-      "category": "Technology",
-      "sentimentLabel": "Positive",
-      "sentimentScore": 0.65,
-      "createdAt": "2025-12-31T07:54:00.000Z"
-    }
-  ]
-}
-```
-
-### GET /health
-
-Health check endpoint.
-
-**Response:**
-```json
-{
-  "status": "OK",
-  "message": "AI News Pulse API is running"
-}
-```
-
-## 📂 Project Structure
-
-```
-Dynamic-news-aggregator-with-sentiment-analysis/
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   │   └── db.js              # MongoDB connection
-│   │   ├── models/
-│   │   │   └── Article.js         # Mongoose schema
-│   │   ├── scrapers/
-│   │   │   ├── bbcScraper.js      # BBC News scraper
-│   │   │   └── techcrunchScraper.js # TechCrunch scraper
-│   │   ├── services/
-│   │   │   ├── geminiService.js   # AI sentiment & categorization
-│   │   │   └── newsService.js     # Business logic
-│   │   ├── routes/
-│   │   │   └── news.js            # API routes
-│   │   ├── scripts/
-│   │   │   └── scrapeNews.js      # Scraper script
-│   │   └── server.js              # Express server
-│   ├── package.json
-│   ├── .env.example
-│   └── .gitignore
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── NewsCard.jsx       # Article card component
-│   │   │   ├── FilterBar.jsx      # Sticky filter bar
-│   │   │   ├── SentimentBadge.jsx # Color-coded badges
-│   │   │   └── CategoryChip.jsx   # Category chips
-│   │   ├── services/
-│   │   │   └── api.js             # API client
-│   │   ├── App.jsx                # Main app component
-│   │   ├── App.css                # Styles
-│   │   └── main.jsx               # React entry point
-│   ├── index.html
-│   ├── vite.config.js
-│   ├── package.json
-│   └── .gitignore
-└── README.md
-```
-
-## 🎨 UI Features
-
-### Professional Design Elements
-- **Dark theme** with purple gradient accents
-- **Card-based layout** with hover effects and shadows
-- **Color-coded sentiment badges:**
-  - 🟢 Green = Positive
-  - 🟡 Yellow = Neutral  
-  - 🔴 Red = Negative
-- **Category chips** with distinct colors
-- **Sticky filter bar** for easy navigation
-- **Smooth animations** and transitions
-- **Responsive design** (desktop, tablet, mobile)
-- **Loading states** with animated spinner
-- **Empty states** with helpful messages
-- **Error handling** with retry functionality
-
-### Typography
-- **Font:** Inter (Google Fonts)
-- **Proper hierarchy:** Headings, body text, labels
-- **Readable line heights** and spacing
-
-## 🔧 Troubleshooting
-
-### No Articles Showing?
-1. Make sure you ran `npm run scrape` to populate the database
-2. Check MongoDB is running (`mongod`)
-3. Verify backend server is running on port 5000
-
-### Backend Won't Start?
-1. Verify Node.js version: `node --version` (should be 18.x)
-2. Check MongoDB connection in `.env`
-3. Ensure Gemini API key is valid
-
-### Frontend Build Errors?
-1. Delete `node_modules` and `package-lock.json`
-2. Run `npm install` again
-3. Verify React 18 and Vite 5 versions in `package.json`
-
-### AI Analysis Taking Long?
-- Normal! Gemini API processes each article individually
-- Typical time: 30-60 seconds for 20-30 articles
-- Includes 300ms delay between requests to avoid rate limits
-
-## 🚀 Future Enhancements
-
-- [ ] **More news sources** (CNN, Reuters, etc.)
-- [ ] **Real-time updates** with WebSockets
-- [ ] **User accounts** and saved articles
-- [ ] **Advanced search** functionality
-- [ ] **Chart visualizations** for sentiment trends
-- [ ] **Email digests** with top stories
-- [ ] **Dark/Light mode** toggle
-- [ ] **Share articles** on social media
-- [ ] **Bookmark** favorite articles
-- [ ] **PWA support** for mobile
-
-## 📝 License
-
-This project is open source and available for educational purposes.
-
-## 🙏 Credits
-
-- **News Sources:** BBC News, TechCrunch
-- **AI:** Google Gemini API
-- **Icons:** Emoji
-- **Fonts:** Google Fonts (Inter)
-
----
-
-**Built with ❤️ using Node.js 18, React 18, Vite 5, MongoDB, and Google Gemini AI**
