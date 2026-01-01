@@ -184,10 +184,131 @@
 // };
 
 
+// import scrapeBBC from '../scrapers/bbcScraper.js';
+// import scrapeTechCrunch from '../scrapers/techcrunchScraper.js';
+// import scrapeVerge from '../scrapers/vergeScraper.js';
+// import { analyzeArticle, shouldReanalyze } from './geminiService.js';
+// import Article from '../models/Article.js';
+
+// /**
+//  * Scrape news from all sources and process
+//  */
+// export const scrapeAndProcessNews = async () => {
+//     try {
+//         console.log('🚀 Starting news scraping and processing...');
+
+//         // 1️⃣ Scrape all sources
+//         const [bbcArticles, techCrunchArticles, vergeArticles] =
+//             await Promise.all([
+//                 scrapeBBC(),
+//                 scrapeTechCrunch(),
+//                 scrapeVerge()
+//             ]);
+
+//         let allArticles = [
+//             ...bbcArticles,
+//             ...techCrunchArticles,
+//             ...vergeArticles
+//         ];
+
+//         console.log(`📊 Total articles scraped: ${allArticles.length}`);
+
+//         // 2️⃣ Deduplicate by URL
+//         const uniqueArticles = [];
+//         const seenUrls = new Set();
+
+//         for (const article of allArticles) {
+//             if (!seenUrls.has(article.url)) {
+//                 seenUrls.add(article.url);
+//                 uniqueArticles.push(article);
+//             }
+//         }
+
+//         console.log(`🔍 Unique articles after deduplication: ${uniqueArticles.length}`);
+
+//         // 3️⃣ Ensure description exists
+//         uniqueArticles.forEach(article => {
+//             if (!article.description?.trim()) {
+//                 article.description = article.title;
+//             }
+//         });
+
+//         // 4️⃣ AI processing
+//         console.log('🤖 Analyzing articles...');
+//         const processedArticles = [];
+
+//         for (let i = 0; i < uniqueArticles.length; i++) {
+//             const article = uniqueArticles[i];
+
+//             console.log(
+//                 `  Processing ${i + 1}/${uniqueArticles.length}: ${article.title.slice(0, 60)}...`
+//             );
+
+//             const analysis = await analyzeArticle(
+//                 article.title,
+//                 article.description
+//             );
+
+//             if (!analysis) continue;
+
+//             processedArticles.push({
+//                 ...article,
+//                 category: analysis.category,
+//                 sentimentLabel: analysis.sentimentLabel,
+//                 sentimentScore: analysis.sentimentScore
+//             });
+
+//             await new Promise(r => setTimeout(r, 300));
+//         }
+
+//         console.log(`✅ AI-processed articles: ${processedArticles.length}`);
+
+//         // 5️⃣ Save to DB (UPSERT = no duplicates)
+//         console.log('💾 Saving articles...');
+//         let savedCount = 0;
+
+//         for (const article of processedArticles) {
+//             await Article.updateOne(
+//                 { url: article.url },
+//                 { $set: article },
+//                 { upsert: true }
+//             );
+//             savedCount++;
+//         }
+
+//         console.log(`✅ Successfully saved ${savedCount} articles`);
+
+//         return processedArticles;
+
+//     } catch (error) {
+//         console.error('❌ News Processing Error:', error.message);
+//         throw error;
+//     }
+// };
+
+// /**
+//  * Fetch articles with filters
+//  */
+// export const getArticles = async (filters = {}) => {
+//     const query = {};
+
+//     if (filters.sentiment && filters.sentiment !== 'All') {
+//         query.sentimentLabel = filters.sentiment;
+//     }
+
+//     if (filters.category && filters.category !== 'All') {
+//         query.category = filters.category;
+//     }
+
+//     return Article.find(query)
+//         .sort({ publishDate: -1 })
+//         .lean();
+// };
+
 import scrapeBBC from '../scrapers/bbcScraper.js';
 import scrapeTechCrunch from '../scrapers/techcrunchScraper.js';
-import scrapeVerge from '../scrapers/vergeScraper.js';
-import { analyzeArticle, shouldReanalyze } from './geminiService.js';
+import scrapeHackerNews from '../scrapers/hackerNewsScraper.js';
+import { analyzeArticle } from './geminiService.js';
 import Article from '../models/Article.js';
 
 /**
@@ -197,43 +318,38 @@ export const scrapeAndProcessNews = async () => {
     try {
         console.log('🚀 Starting news scraping and processing...');
 
-        // 1️⃣ Scrape all sources
-        const [bbcArticles, techCrunchArticles, vergeArticles] =
-            await Promise.all([
-                scrapeBBC(),
-                scrapeTechCrunch(),
-                scrapeVerge()
-            ]);
+        // 1️⃣ Scrape all sources (BBC + TechCrunch + Hacker News)
+        const results = await Promise.allSettled([
+            scrapeBBC(),
+            scrapeTechCrunch(),
+            scrapeHackerNews()
+        ]);
 
-        let allArticles = [
-            ...bbcArticles,
-            ...techCrunchArticles,
-            ...vergeArticles
-        ];
+        const allArticles = results
+            .filter(r => r.status === 'fulfilled')
+            .flatMap(r => r.value);
 
         console.log(`📊 Total articles scraped: ${allArticles.length}`);
 
         // 2️⃣ Deduplicate by URL
-        const uniqueArticles = [];
         const seenUrls = new Set();
-
-        for (const article of allArticles) {
-            if (!seenUrls.has(article.url)) {
-                seenUrls.add(article.url);
-                uniqueArticles.push(article);
-            }
-        }
+        const uniqueArticles = allArticles.filter(article => {
+            if (!article?.url) return false;
+            if (seenUrls.has(article.url)) return false;
+            seenUrls.add(article.url);
+            return true;
+        });
 
         console.log(`🔍 Unique articles after deduplication: ${uniqueArticles.length}`);
 
         // 3️⃣ Ensure description exists
         uniqueArticles.forEach(article => {
-            if (!article.description?.trim()) {
+            if (!article.description || !article.description.trim()) {
                 article.description = article.title;
             }
         });
 
-        // 4️⃣ AI processing
+        // 4️⃣ Sentiment + category analysis
         console.log('🤖 Analyzing articles...');
         const processedArticles = [];
 
@@ -253,12 +369,13 @@ export const scrapeAndProcessNews = async () => {
 
             processedArticles.push({
                 ...article,
-                category: analysis.category,
                 sentimentLabel: analysis.sentimentLabel,
-                sentimentScore: analysis.sentimentScore
+                sentimentScore: analysis.sentimentScore,
+                category: analysis.category
             });
 
-            await new Promise(r => setTimeout(r, 300));
+            // small delay = safe scraping
+            await new Promise(r => setTimeout(r, 250));
         }
 
         console.log(`✅ AI-processed articles: ${processedArticles.length}`);
